@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Register</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.9/jquery.validate.min.js" type="text/javascript"></script>
+  
+  <link rel="stylesheet" href="/stylesheets/style.css">
+  <script src="/javascripts/script.js"></script>
+  <style>
+    p.item {
+      padding: 16px;
+      text-align: center;
+      border-radius: 8px;
+      color: white;
+      background-color: green;
+    }
+  </style>
+</head>
+
+<body class="bg-secondary">
+
+  <h3 class="text-center my-5 text-light">Account Registration</h3>
+
+  <!-- buộc toàn bộ dòng và cột phải bỏ trong class container -->
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-10 col-lg-8 col-xl-5">
+        <div class="border p-3 rounded bg-light">
+          {{!-- form --}}
+          <form action="/user/register" method="post" id="register-form">
+            <div class="form-group">
+              <label for="user">Fullname</label>
+              <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">
+                    <i class="fas fa-user"></i>
+                  </span>
+                </div>
+                <input id="name" type="text" class="form-control" placeholder="Your Name" name="name">
+                
+              </div>
+
+            <div class="form-group">
+              <label for="user">Email</label>
+              <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">
+                    <i class="fas fa-user"></i>
+                  </span>
+                </div>
+                <input id="email" type="text" class="form-control" placeholder="Email" name="email">
+              </div>
+
+            </div>
+            <div class="form-group">
+              <label for="pass">Password</label>
+              <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">
+                    <i class="fas fa-lock"></i>
+                  </span>
+                </div>
+                <input type="password" class="form-control" placeholder="Password" id="password" name="password">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="pass">Confirm Password</label>
+              <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">
+                    <i class="fas fa-lock"></i>
+                  </span>
+                </div>
+                <input type="password" class="form-control" placeholder="Password" id="rePassword" name="rePassword">
+              </div>
+            </div>
+            <div class="form-group">
+              {{#if flash}}
+                <div class="alert alert-dismissible alert-{{flash.type}}">
+                  <strong>{{flash.intro}}</strong> {{{flash.message}}}
+                  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+              {{/if}}
+            </div>
+            <div class="form-group">
+              <button class="btn btn-success px-5" type="submit">Register</button>
+            </div>
+            <div class="form-group">
+              <p>Already have an account? <a href="http://localhost:3000/user">Login now!</a></p>
+            </div>
+          </form>
+
+          {{!-- form --}}
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+</body>
+
+
+</html>
+
+{{!-- 
+<script>
+    const validateEmail = (email) => {
+      return String(email)
+        .toLowerCase()
+        .match(
+          /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+        );
+    };
+
+    //const ten viet tat = class.method cua class.bind(doi tuong)
+    //vi du a = document.querySelector.bind(a) -> a.querySelector 
+    //=> document.querySelector chi de lay ra method querySelector, bind(a) moi la object truyen vao     
+    const docSel = document.querySelector.bind(document)
+
+    window.addEventListener('DOMContentLoaded', e => {
+
+      docSel('#register-form').addEventListener('submit', e => {
+        e.preventDefault();
+
+        const email = docSel('#email').value || ''
+        const fullName = docSel('#name').value || ''
+        const pass = docSel('#password').value || ''
+        const passConfirm = docSel('#password-confirm').value || ''
+        
+        let err_msg = []
+
+        //xu li empty input
+        if(email == '' || fullName == '' || pass == '' || passConfirm == '' ){
+          err_msg.push('Khong duoc de trong thong tin')
+
+          docSel('#name').focus()
+        }
+
+        //xu li sai dinh dang email 
+        //if validateEmail(email) tra ve mang -> dung la email, nguoc lai tra ve null
+        if(!validateEmail(email)){
+          err_msg.push('Sai dinh dang email') 
+
+          docSel('#email').focus()
+        }
+        
+        //pass it hon 6 ki tu
+        if(pass.length < 7){
+          err_msg.push('Mat khau phai tu 6 ki tu tro len') 
+          docSel('#password').focus()
+        }
+
+        //pass ko trung passConfirm
+        if(pass !== passConfirm){
+          err_msg.push('Sai xac thuc mat khau') 
+          docSel('#password').focus()
+        }
+
+        //in loi
+        if(err_msg.length != 0){
+          docSel('#register__alert-error').classList.add('show')
+          docSel('#register__alert-error').innerHTML = `${err_msg[0]}
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>`
+        }
+        //thanh cong
+        
+
+      })
+    })
+  </script> 
+  --}}
+
+{{!-- const data = {fullName: fullName, email: email, password: pass}
+        console.log(data)
+        fetch('/user/register', {
+          method: 'post',
+          headers: {'Content-Type' : 'application/json'},
+          body: JSON.stringify({
+
+          })
+        }) --}}
