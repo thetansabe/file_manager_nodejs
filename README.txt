@@ -1,7 +1,7 @@
 1) 
 Cach chay: npm start roi vao port 3000
 Tai khoan test: nguyenvanc@gmail.com
-Mat khau: 1234567 hoac 12345678
+Mat khau: 1234567
 
 2) Project nay dung mysql:
 - import file .sql

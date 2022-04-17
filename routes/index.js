@@ -156,4 +156,11 @@ router.post('/handle_file', (req, res) => {
 
   return res.redirect(303,'/')
 })
+
+
+router.get('/get_files', (req,res) => {
+  const myFiles = getFileInfoFromFolder('./public/uploads')
+
+  return res.send(JSON.stringify(myFiles))
+})
 module.exports = router;

@@ -76,7 +76,7 @@
                     <span class="fa fa-search"></span>
                 </span>
             </div>
-            <input type="text" class="form-control" placeholder="Search">
+            <input id = "search_bar" type="text" class="form-control" placeholder="Search">
         </div>
         <div class="btn-group my-3">
             <button type="button" class="btn btn-light border">
@@ -97,7 +97,7 @@
                     <th>Actions</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="display_files">
                 {{#if files}}
                     {{#each files}}
                         <tr>
@@ -273,6 +273,7 @@
             $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
         });
 
+        // Handle upload form
         document.querySelector('#upload_file_form').addEventListener('submit', (e) => {
             e.preventDefault()
             
@@ -311,7 +312,7 @@
 
                 //turn off submit btn
                 if(e.loaded == e.total)
-                    document.querySelector('#upload_btn').removeAttribute('disabled')
+                    location.reload()
                 else
                     document.querySelector('#upload_btn').setAttribute('disabled','')
 
@@ -326,6 +327,81 @@
 
             xhr.send(new FormData(e.target))
         })
+    
+        // Handle search bar
+        // logic: lay het mang chua TAT CA file ve
+        // array.filter de loc mang do
+        // display ra man hinh
+        document.querySelector('#search_bar').addEventListener('keyup', e => {
+            console.log(e.target.value)
+            const searchFor = e.target.value
+            fetch(`/get_files`)
+            .then(res => res.json())
+            .then(data => {
+                console.log(data)
+                //data la json chua tat ca cac file
+                const myFiles = data.filter(file => {
+                    const fileName = file.name.toLowerCase()
+
+                    return fileName.includes(searchFor.toLowerCase())
+                })
+                displayWhenSearching('#display_files', myFiles)
+            })
+        })
+
+        // Handle display file when searching
+        function displayWhenSearching(tbodyId, dataArr){
+            const tbody = document.querySelector(tbodyId)
+            tbody.innerHTML = '' //reset 
+
+            dataArr.forEach(data => { 
+                const tr = document.createElement('tr')
+                
+                let icon = ''
+                let type = ''
+                const ext = data.extension
+
+                //icon + type
+                if(ext == ''){
+                    icon = 'folder'
+                    type = 'Folder'
+                } 
+                else if(ext == 'png' || ext == 'jpe?p' || ext == 'sgv'){
+                    icon = 'file-image'
+                    type = 'Image'
+                }
+                else if(ext == 'zip' || ext == 'rar'){
+                    icon = 'file-archive'
+                    type = 'Compressed file' 
+                }
+                else{
+                    icon = 'file-archive'
+                    type = 'Text file'
+                }
+                
+                //size
+                const kb = Math.round(data.fileSizeInBytes/1024)
+                const size = kb > 1? `${kb} KB` : `${data.fileSizeInBytes} B`
+                
+                const context = `
+                            <td>
+                                <i class="fa fa-${icon}"></i>
+                                <a href="/uploads/${data.name}" download>${data.name}</a>
+                            </td>
+                            <td>${type}</td>
+                            <td>${size}</td>
+                            <td>${data.lastModify}</td>
+                            <td>
+                                <span><i class="fa fa-download action"></i></button>
+                                    <span><i class="fa fa-edit action"></i></button>
+                                        <span><i class="fa fa-trash action"></i></button>
+                            </td>
+                        `
+
+                tr.innerHTML = context
+                tbody.appendChild(tr)
+            })
+        }
     </script>
 
 </body>
